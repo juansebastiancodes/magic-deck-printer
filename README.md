@@ -1,9 +1,6 @@
 # Magic Deck Printer
 
-This project creates printable PDFs for Magic cards stored as images. The
-script reads all images inside `deck-to-print/` and generates two files:
-`fronts.pdf` and `backs.pdf`. They have the same layout so they can be
-printed in duplex mode.
+This project creates printable PDFs for Magic cards. It can download card images using the Scryfall API and then generate PDF files ready for duplex printing.
 
 ## Requirements
 
@@ -11,11 +8,12 @@ printed in duplex mode.
 - [Pillow](https://pypi.org/project/Pillow/)
 - [ReportLab](https://pypi.org/project/reportlab/)
 - [PyYAML](https://pypi.org/project/PyYAML/)
+- [requests](https://pypi.org/project/requests/)
 
 Install them with:
 
 ```bash
-pip install Pillow reportlab PyYAML
+pip install Pillow reportlab PyYAML requests
 ```
 
 ## Configuration
@@ -30,23 +28,29 @@ GRID: [2, 5]             # [columns, rows]
 MARGIN_MM: 5             # margin on all sides
 GAP_MM: 2                # space between cards
 DEFAULT_BACK: back.jpg   # default back image in project root
+language-default: es     # preferred language for downloads
 ```
 
-Place your card images in `deck-to-print/` with names like:
+## Preparing card images
+
+Create a `card-list.txt` file listing the cards to download:
 
 ```
-4 Swamp.jpg       # print this image 4 times
-F01 Card Front.jpg
-B01 Card Back.jpg
+2 Swamp
+3 Island
 ```
 
-`F` indicates the front of a two-sided card and `B` the matching back with
-the same numeric identifier. Cards without a specific back will use the
-`DEFAULT_BACK` image.
+Run the downloader to populate `deck-to-print/` with the required images:
 
-## Usage
+```bash
+python fetch_images.py
+```
 
-Run the generator from the project root:
+Images of cards with a different back will be stored in matching `F##` and `B##` files.
+
+## Generating the PDFs
+
+Once the images are in place, run:
 
 ```bash
 python generate_pdf.py
