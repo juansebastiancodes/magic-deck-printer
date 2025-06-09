@@ -10,7 +10,10 @@ from reportlab.lib.utils import ImageReader
 CONFIG_FILE = 'config.yml'
 DECK_DIR = 'deck-to-print'
 
-CARD_PATTERN = re.compile(r'^(?:(\d+)\s+)?([FB]?)(\d{2})?\s+(.*)\.(?:jpg|png)$', re.IGNORECASE)
+CARD_PATTERN = re.compile(
+    r'^(?:(\d+)\s+)?(?:([FB])(\d{2})\s+)?(.*)\.(?:jpg|png)$',
+    re.IGNORECASE,
+)
 
 PAGE_SIZES = {
     'A4': A4,
