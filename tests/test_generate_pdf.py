@@ -103,8 +103,8 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
     cfg = {
-        'page_size': (100, 100),
-        'margin_pt': 0,
+        'page_size': (34, 100),  # extra space on the right
+        'margin_pt': 5,
         'gap_pt': 0,
         'card_width_pt': 10,
         'card_height_pt': 20,
@@ -114,4 +114,4 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=False)
 
-    assert [p[0] for p in positions] == [10, 0]
+    assert [p[0] for p in positions] == [19, 9]
