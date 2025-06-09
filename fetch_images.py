@@ -61,12 +61,22 @@ def _fetch_single_card(qty, name, lang):
             card_data = r.json()
             break
     if not card_data:
-        print(f'Card not found: {name}')
+        print(
+            f"Advertencia: no se encontró la carta '{name}' en Scryfall. "
+            "Por favor añádela manualmente."
+        )
         return
+
+    if card_data.get('lang') != lang:
+        print(
+            f"Advertencia: la carta '{name}' no está disponible en idioma "
+            f"{lang}. Se descargará la versión en {card_data.get('lang')}."
+        )
 
     if 'image_uris' in card_data:
         img_url = card_data['image_uris'].get('png') or card_data['image_uris'].get('large')
-        fname = f"{qty} {card_data['name']}.png"
+        card_name = card_data.get('printed_name') or card_data['name']
+        fname = f"{qty} {card_name}.png"
         path = os.path.join(DECK_DIR, fname)
         download_image(img_url, path)
     elif 'card_faces' in card_data and len(card_data['card_faces']) >= 2:
@@ -74,12 +84,17 @@ def _fetch_single_card(qty, name, lang):
         back = card_data['card_faces'][1]
         for _ in range(qty):
             ident = f"{_next_pair_id():02d}"
-            fpath = os.path.join(DECK_DIR, f"F{ident} {front['name']}.png")
-            bpath = os.path.join(DECK_DIR, f"B{ident} {back['name']}.png")
+            front_name = front.get('printed_name') or front['name']
+            back_name = back.get('printed_name') or back['name']
+            fpath = os.path.join(DECK_DIR, f"F{ident} {front_name}.png")
+            bpath = os.path.join(DECK_DIR, f"B{ident} {back_name}.png")
             download_image(front['image_uris'].get('png') or front['image_uris'].get('large'), fpath)
             download_image(back['image_uris'].get('png') or back['image_uris'].get('large'), bpath)
     else:
-        print(f'No images for card: {name}')
+        print(
+            f"Advertencia: no se encontró imagen para la carta '{name}'. "
+            "Por favor añádela manualmente."
+        )
 
 
 def fetch_images():
