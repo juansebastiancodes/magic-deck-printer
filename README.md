@@ -23,13 +23,16 @@ Edit `config.yml` to change layout options.
 ```
 PAGE_SIZE: A4            # or LETTER
 DPI: 300                 # used for conversions
-CARDS_PER_PAGE: 10       # must match GRID columns × rows
-GRID: [2, 5]             # [columns, rows]
 MARGIN_MM: 5             # margin on all sides
 GAP_MM: 2                # space between cards
 DEFAULT_BACK: back.jpg   # default back image in project root
 language-default: es     # preferred language for downloads
 ```
+
+Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").
+The script calculates the number of rows and columns automatically to fit as
+many cards as possible on each page according to the configured margins and
+gaps.
 
 ## Preparing card images
 
