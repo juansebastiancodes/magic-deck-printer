@@ -63,5 +63,6 @@ python3 generate_pdf.py
 
 PDF files will be created inside the `results/` directory with a name based on
 the current date and time, for example `deck_20230101_120000_fronts.pdf` and
-`deck_20230101_120000_backs.pdf`. Print them using the "flip on long edge"
-duplex option so that fronts and backs align.
+`deck_20230101_120000_backs.pdf`. The back pages are mirrored horizontally so
+that fronts and backs line up when cutting. Print using the "flip on long edge"
+duplex option to ensure proper alignment.

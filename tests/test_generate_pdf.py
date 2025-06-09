@@ -85,3 +85,33 @@ def test_parse_deck(monkeypatch, gp, tmp_path):
     assert len(swamps) == 2
     assert fronts[0]['back'].endswith('B01 Card Back.jpg')
     assert all(c['back'] == str(default_back) for c in swamps)
+
+
+def test_draw_pages_back_mirrored(monkeypatch, gp):
+    positions = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, img, x, y, width=None, height=None):
+            positions.append((x, y))
+        def showPage(self):
+            pass
+        def save(self):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (34, 100),  # extra space on the right
+        'margin_pt': 5,
+        'gap_pt': 0,
+        'card_width_pt': 10,
+        'card_height_pt': 20,
+        'GRID': (2, 1),
+    }
+    pages = [[{'front': 'f1', 'back': 'b1'}, {'front': 'f2', 'back': 'b2'}]]
+
+    gp.draw_pages('dummy.pdf', pages, cfg, front=False)
+
+    assert [p[0] for p in positions] == [19, 9]

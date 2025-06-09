@@ -103,12 +103,19 @@ def draw_pages(pdf_path, pages, config, front=True):
     cell_width = config['card_width_pt']
     cell_height = config['card_height_pt']
 
+    extra_x = page_width - 2 * margin - cols * cell_width - (cols - 1) * gap
+    extra_x = max(0, extra_x)
+    right_margin = margin + extra_x
+
     c = canvas.Canvas(pdf_path, pagesize=page_size)
     for page in pages:
         for idx, card in enumerate(page):
             col = idx % cols
             row = idx // cols
-            x = margin + col * (cell_width + gap)
+            if front:
+                x = margin + col * (cell_width + gap)
+            else:
+                x = right_margin + (cols - 1 - col) * (cell_width + gap)
             y = page_height - margin - cell_height - row * (cell_height + gap)
             img_path = card['front'] if front else card['back']
             img = Image.open(img_path)
