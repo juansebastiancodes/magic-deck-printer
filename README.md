@@ -29,6 +29,7 @@ MARGIN_MM: 5             # margin on all sides
 GAP_MM: 2                # space between cards
 DEFAULT_BACK: resources/back.jpg   # default back image
 language-default: es     # preferred language for downloads
+pages-intercalation: true # interleave front and back pages in one PDF
 ```
 
 Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").
@@ -62,7 +63,9 @@ python3 generate_pdf.py
 ```
 
 PDF files will be created inside the `results/` directory with a name based on
-the current date and time, for example `deck_20230101_120000_fronts.pdf` and
-`deck_20230101_120000_backs.pdf`. The back pages are mirrored horizontally so
-that fronts and backs line up when cutting. Print using the "flip on long edge"
-duplex option to ensure proper alignment.
+the current date and time. If `pages-intercalation` is enabled (the default) a
+single file like `deck_20230101_120000.pdf` will contain alternating front and
+back pages. Otherwise two files, `deck_20230101_120000_fronts.pdf` and
+`deck_20230101_120000_backs.pdf`, will be produced. The back pages are mirrored
+horizontally so that fronts and backs line up when cutting. Print using the
+"flip on long edge" duplex option to ensure proper alignment.

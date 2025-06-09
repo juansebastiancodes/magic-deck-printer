@@ -115,3 +115,33 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
     gp.draw_pages('dummy.pdf', pages, cfg, front=False)
 
     assert [p[0] for p in positions] == [19, 9]
+
+
+def test_draw_pages_intercalated_order(monkeypatch, gp):
+    events = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, img, x, y, width=None, height=None):
+            events.append(img)
+        def showPage(self):
+            events.append('page')
+        def save(self):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (10, 10),
+        'margin_pt': 0,
+        'gap_pt': 0,
+        'card_width_pt': 1,
+        'card_height_pt': 1,
+        'GRID': (1, 1),
+    }
+    pages = [[{'front': 'f1', 'back': 'b1'}]]
+
+    gp.draw_pages_intercalated('dummy.pdf', pages, cfg)
+
+    assert events == ['f1', 'page', 'b1', 'page']

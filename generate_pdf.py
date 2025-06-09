@@ -39,6 +39,7 @@ def load_config():
     cfg['gap_pt'] = mm_to_pt(cfg.get('GAP_MM', 0))
     cfg['card_width_pt'] = mm_to_pt(CARD_WIDTH_MM)
     cfg['card_height_pt'] = mm_to_pt(CARD_HEIGHT_MM)
+    cfg.setdefault('pages-intercalation', True)
     return cfg
 
 
@@ -94,7 +95,7 @@ def compute_grid(config):
     return cols, rows
 
 
-def draw_pages(pdf_path, pages, config, front=True):
+def _draw_single_page(canvas_obj, page, config, front):
     page_size = config['page_size']
     margin = config['margin_pt']
     gap = config['gap_pt']
@@ -107,20 +108,34 @@ def draw_pages(pdf_path, pages, config, front=True):
     extra_x = max(0, extra_x)
     right_margin = margin + extra_x
 
-    c = canvas.Canvas(pdf_path, pagesize=page_size)
+    for idx, card in enumerate(page):
+        col = idx % cols
+        row = idx // cols
+        if front:
+            x = margin + col * (cell_width + gap)
+        else:
+            x = right_margin + (cols - 1 - col) * (cell_width + gap)
+        y = page_height - margin - cell_height - row * (cell_height + gap)
+        img_path = card['front'] if front else card['back']
+        img = Image.open(img_path)
+        img_reader = ImageReader(img)
+        canvas_obj.drawImage(img_reader, x, y, width=cell_width, height=cell_height)
+
+
+def draw_pages(pdf_path, pages, config, front=True):
+    c = canvas.Canvas(pdf_path, pagesize=config['page_size'])
     for page in pages:
-        for idx, card in enumerate(page):
-            col = idx % cols
-            row = idx // cols
-            if front:
-                x = margin + col * (cell_width + gap)
-            else:
-                x = right_margin + (cols - 1 - col) * (cell_width + gap)
-            y = page_height - margin - cell_height - row * (cell_height + gap)
-            img_path = card['front'] if front else card['back']
-            img = Image.open(img_path)
-            img_reader = ImageReader(img)
-            c.drawImage(img_reader, x, y, width=cell_width, height=cell_height)
+        _draw_single_page(c, page, config, front)
+        c.showPage()
+    c.save()
+
+
+def draw_pages_intercalated(pdf_path, pages, config):
+    c = canvas.Canvas(pdf_path, pagesize=config['page_size'])
+    for page in pages:
+        _draw_single_page(c, page, config, front=True)
+        c.showPage()
+        _draw_single_page(c, page, config, front=False)
         c.showPage()
     c.save()
 
@@ -134,11 +149,14 @@ def main():
 
     os.makedirs(RESULTS_DIR, exist_ok=True)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    fronts_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_fronts.pdf')
-    backs_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_backs.pdf')
-
-    draw_pages(fronts_pdf, pages, config, front=True)
-    draw_pages(backs_pdf, pages, config, front=False)
+    if config.get('pages-intercalation', True):
+        pdf_path = os.path.join(RESULTS_DIR, f'deck_{timestamp}.pdf')
+        draw_pages_intercalated(pdf_path, pages, config)
+    else:
+        fronts_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_fronts.pdf')
+        backs_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_backs.pdf')
+        draw_pages(fronts_pdf, pages, config, front=True)
+        draw_pages(backs_pdf, pages, config, front=False)
 
 
 if __name__ == '__main__':
