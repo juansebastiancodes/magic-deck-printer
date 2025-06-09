@@ -4,7 +4,8 @@ import requests
 import yaml
 
 CONFIG_FILE = 'config.yml'
-DECK_DIR = 'deck-to-print'
+RESOURCES_DIR = 'resources'
+DECK_DIR = os.path.join(RESOURCES_DIR, 'deck')
 CARD_LIST_FILE = 'card-list.txt'
 
 
