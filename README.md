@@ -48,7 +48,7 @@ Create a `card-list.txt` file listing the cards to download:
 Run the downloader to populate `resources/deck/` with the required images:
 
 ```bash
-python fetch_images.py
+python3 fetch_images.py
 ```
 
 Images of cards with a different back will be stored in matching `F##` and `B##` files.
@@ -58,7 +58,7 @@ Images of cards with a different back will be stored in matching `F##` and `B##`
 Once the images are in place, run:
 
 ```bash
-python generate_pdf.py
+python3 generate_pdf.py
 ```
 
 PDF files will be created inside the `results/` directory with a name based on

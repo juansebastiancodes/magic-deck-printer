@@ -1,2 +1,83 @@
-2 Swamp
-3 Island
+1 Aether Spellbomb
+1 Ancient Den
+1 Anguished Unmaking
+1 Arcane Denial
+1 Arcane Signet
+1 Ash Barrens
+1 Azorius Signet
+1 Baleful Strix
+1 Bronze Guardian
+1 Buried Ruin
+1 Cleansing Nova
+1 Command Tower
+1 Commander's Sphere
+1 Counterspell
+1 Cranial Plating
+1 Dance of the Manse
+1 Darksteel Citadel
+1 Despark
+1 Dimir Signet
+1 Dispatch
+1 Duplicant
+1 Efficient Construction
+1 Esper Panorama
+1 Etherium Sculptor
+1 Evolving Wilds
+1 Exotic Orchard
+1 Fabricate
+1 Fellwar Stone
+1 Foundry Inspector
+1 Generous Gift
+1 Go for the Throat
+1 Goldmire Bridge
+1 Inspiring Statuary
+8 Island
+1 Lightning Greaves
+1 Liquimetal Torque
+1 Marionette Master
+1 Master of Etherium
+1 Mechanized Production
+1 Mind Stone
+1 Mistvault Bridge
+1 Myr Battlesphere
+1 Negate
+1 Nihil Spellbomb
+1 Noxious Gearhulk
+1 Obscura Storefront
+1 One with the Machine
+1 Organic Extinction
+1 Ornithopter of Paradise
+1 Orzhov Signet
+1 Padeem, Consul of Innovation
+1 Path of Ancestry
+1 Path to Exile
+7 Plains
+1 Sai, Master Thopterist
+1 Scrap Trawler
+1 Seat of the Synod
+1 Sharding Sphinx
+1 Sharuum the Hegemon
+1 Shimmer Myr
+1 Skullclamp
+1 Sol Ring
+1 Solemn Simulacrum
+1 Springleaf Drum
+1 Steel Hellkite
+6 Swamp
+1 Sword of the Meek
+1 Swords to Plowshares
+1 Talisman of Dominance
+1 Talisman of Hierarchy
+1 Talisman of Progress
+1 Terramorphic Expanse
+1 Tezzeret's Gambit
+1 Thirst for Knowledge
+1 Thopter Foundry
+1 Thopter Spy Network
+1 Thought Monitor
+1 Urza, Chief Artificer
+1 Urza, Prince of Kroog
+1 Vault of Whispers
+1 Void Rend
+1 Rebbec, Architect of Ascension
+1 Silas Renn, Seeker Adept

@@ -1,6 +1,6 @@
 PAGE_SIZE: A4
 DPI: 300
 MARGIN_MM: 5
-GAP_MM: 2
+GAP_MM: 1
 DEFAULT_BACK: resources/back.jpg
-language-default: es
+language-default: en
