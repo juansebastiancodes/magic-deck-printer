@@ -2,6 +2,7 @@ import os
 import re
 import requests
 import yaml
+from urllib.parse import urlparse, urlunparse, parse_qsl, urlencode
 from concurrent.futures import ThreadPoolExecutor
 import threading
 from itertools import count
@@ -50,6 +51,15 @@ def download_image(url, dest):
         f.write(resp.content)
 
 
+def _append_lang(url: str, lang: str) -> str:
+    """Return URL with `lang` query parameter added if missing."""
+    parsed = urlparse(url)
+    query = dict(parse_qsl(parsed.query))
+    query.setdefault('lang', lang)
+    new_query = urlencode(query)
+    return urlunparse(parsed._replace(query=new_query))
+
+
 def _fetch_single_card(qty, name, lang):
     card_data = None
     for language in (lang, 'en'):
@@ -75,6 +85,7 @@ def _fetch_single_card(qty, name, lang):
 
     if 'image_uris' in card_data:
         img_url = card_data['image_uris'].get('png') or card_data['image_uris'].get('large')
+        img_url = _append_lang(img_url, lang)
         card_name = card_data.get('printed_name') or card_data['name']
         fname = f"{qty} {card_name}.png"
         path = os.path.join(DECK_DIR, fname)
@@ -88,8 +99,10 @@ def _fetch_single_card(qty, name, lang):
             back_name = back.get('printed_name') or back['name']
             fpath = os.path.join(DECK_DIR, f"F{ident} {front_name}.png")
             bpath = os.path.join(DECK_DIR, f"B{ident} {back_name}.png")
-            download_image(front['image_uris'].get('png') or front['image_uris'].get('large'), fpath)
-            download_image(back['image_uris'].get('png') or back['image_uris'].get('large'), bpath)
+            front_url = front['image_uris'].get('png') or front['image_uris'].get('large')
+            back_url = back['image_uris'].get('png') or back['image_uris'].get('large')
+            download_image(_append_lang(front_url, lang), fpath)
+            download_image(_append_lang(back_url, lang), bpath)
     else:
         print(
             f"Advertencia: no se encontró imagen para la carta '{name}'. "
