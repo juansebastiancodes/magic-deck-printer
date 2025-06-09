@@ -20,6 +20,9 @@ PAGE_SIZES = {
     'LETTER': LETTER,
 }
 
+CARD_WIDTH_MM = 63.5  # 2.5 inches
+CARD_HEIGHT_MM = 88.9  # 3.5 inches
+
 def mm_to_pt(mm: float) -> float:
     return mm * 72 / 25.4
 
@@ -31,6 +34,8 @@ def load_config():
     cfg['page_size'] = page_size
     cfg['margin_pt'] = mm_to_pt(cfg.get('MARGIN_MM', 0))
     cfg['gap_pt'] = mm_to_pt(cfg.get('GAP_MM', 0))
+    cfg['card_width_pt'] = mm_to_pt(CARD_WIDTH_MM)
+    cfg['card_height_pt'] = mm_to_pt(CARD_HEIGHT_MM)
     return cfg
 
 
@@ -74,14 +79,26 @@ def build_pages(cards, cols, rows):
     return pages
 
 
+def compute_grid(config):
+    page_width, page_height = config['page_size']
+    margin = config['margin_pt']
+    gap = config['gap_pt']
+    card_w = config['card_width_pt']
+    card_h = config['card_height_pt']
+
+    cols = max(1, int((page_width - 2 * margin + gap) // (card_w + gap)))
+    rows = max(1, int((page_height - 2 * margin + gap) // (card_h + gap)))
+    return cols, rows
+
+
 def draw_pages(pdf_path, pages, config, front=True):
     page_size = config['page_size']
     margin = config['margin_pt']
     gap = config['gap_pt']
     cols, rows = config['GRID']
     page_width, page_height = page_size
-    cell_width = (page_width - 2 * margin - (cols - 1) * gap) / cols
-    cell_height = (page_height - 2 * margin - (rows - 1) * gap) / rows
+    cell_width = config['card_width_pt']
+    cell_height = config['card_height_pt']
 
     c = canvas.Canvas(pdf_path, pagesize=page_size)
     for page in pages:
@@ -89,7 +106,7 @@ def draw_pages(pdf_path, pages, config, front=True):
             col = idx % cols
             row = idx // cols
             x = margin + col * (cell_width + gap)
-            y = page_height - margin - (row + 1) * cell_height - row * gap
+            y = page_height - margin - cell_height - row * (cell_height + gap)
             img_path = card['front'] if front else card['back']
             img = Image.open(img_path)
             img_reader = ImageReader(img)
@@ -100,6 +117,7 @@ def draw_pages(pdf_path, pages, config, front=True):
 
 def main():
     config = load_config()
+    config['GRID'] = compute_grid(config)
     cards = parse_deck(config)
     cols, rows = config['GRID']
     pages = build_pages(cards, cols, rows)

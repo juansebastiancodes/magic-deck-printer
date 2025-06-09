@@ -1,7 +1,5 @@
 PAGE_SIZE: A4
 DPI: 300
-CARDS_PER_PAGE: 10
-GRID: [2, 5]  # columns, rows
 MARGIN_MM: 5
 GAP_MM: 2
 DEFAULT_BACK: back.jpg
