@@ -108,7 +108,10 @@ def draw_pages(pdf_path, pages, config, front=True):
         for idx, card in enumerate(page):
             col = idx % cols
             row = idx // cols
-            x = margin + col * (cell_width + gap)
+            if front:
+                x = margin + col * (cell_width + gap)
+            else:
+                x = margin + (cols - 1 - col) * (cell_width + gap)
             y = page_height - margin - cell_height - row * (cell_height + gap)
             img_path = card['front'] if front else card['back']
             img = Image.open(img_path)
