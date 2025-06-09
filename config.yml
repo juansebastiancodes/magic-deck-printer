@@ -4,3 +4,4 @@ MARGIN_MM: 5
 GAP_MM: 1
 DEFAULT_BACK: resources/back.jpg
 language-default: en
+pages-intercalation: true
