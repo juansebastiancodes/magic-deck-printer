@@ -2,13 +2,16 @@ import os
 import re
 import math
 import yaml
+from datetime import datetime
 from PIL import Image
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, LETTER
 from reportlab.lib.utils import ImageReader
 
 CONFIG_FILE = 'config.yml'
-DECK_DIR = 'deck-to-print'
+RESOURCES_DIR = 'resources'
+DECK_DIR = os.path.join(RESOURCES_DIR, 'deck')
+RESULTS_DIR = 'results'
 
 CARD_PATTERN = re.compile(
     r'^(?:(\d+)\s+)?(?:([FB])(\d{2})\s+)?(.*)\.(?:jpg|png)$',
@@ -121,8 +124,14 @@ def main():
     cards = parse_deck(config)
     cols, rows = config['GRID']
     pages = build_pages(cards, cols, rows)
-    draw_pages('fronts.pdf', pages, config, front=True)
-    draw_pages('backs.pdf', pages, config, front=False)
+
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    fronts_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_fronts.pdf')
+    backs_pdf = os.path.join(RESULTS_DIR, f'deck_{timestamp}_backs.pdf')
+
+    draw_pages(fronts_pdf, pages, config, front=True)
+    draw_pages(backs_pdf, pages, config, front=False)
 
 
 if __name__ == '__main__':

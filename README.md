@@ -2,6 +2,8 @@
 
 This project creates printable PDFs for Magic cards. It can download card images using the Scryfall API and then generate PDF files ready for duplex printing.
 
+Images and other assets live under the `resources/` directory. Card images are stored in `resources/deck/` and the default card back is `resources/back.jpg`. Generated PDFs are written to the `results/` directory with timestamped names.
+
 ## Requirements
 
 - Python 3.7+
@@ -25,7 +27,7 @@ PAGE_SIZE: A4            # or LETTER
 DPI: 300                 # used for conversions
 MARGIN_MM: 5             # margin on all sides
 GAP_MM: 2                # space between cards
-DEFAULT_BACK: back.jpg   # default back image in project root
+DEFAULT_BACK: resources/back.jpg   # default back image
 language-default: es     # preferred language for downloads
 ```
 
@@ -43,7 +45,7 @@ Create a `card-list.txt` file listing the cards to download:
 3 Island
 ```
 
-Run the downloader to populate `deck-to-print/` with the required images:
+Run the downloader to populate `resources/deck/` with the required images:
 
 ```bash
 python fetch_images.py
@@ -59,5 +61,7 @@ Once the images are in place, run:
 python generate_pdf.py
 ```
 
-The resulting `fronts.pdf` and `backs.pdf` can be printed using the
-"flip on long edge" duplex option so that fronts and backs align.
+PDF files will be created inside the `results/` directory with a name based on
+the current date and time, for example `deck_20230101_120000_fronts.pdf` and
+`deck_20230101_120000_backs.pdf`. Print them using the "flip on long edge"
+duplex option so that fronts and backs align.
