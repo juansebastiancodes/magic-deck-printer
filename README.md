@@ -30,6 +30,7 @@ GAP_MM: 2                # space between cards
 DEFAULT_BACK: resources/back.jpg   # default back image
 language-default: es     # preferred language for downloads
 pages-intercalation: true # interleave front and back pages in one PDF
+horizontal-back-offset: -2 # horizontal shift in mm for backs (negative = left)
 ```
 
 Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").
@@ -67,5 +68,7 @@ the current date and time. If `pages-intercalation` is enabled (the default) a
 single file like `deck_20230101_120000.pdf` will contain alternating front and
 back pages. Otherwise two files, `deck_20230101_120000_fronts.pdf` and
 `deck_20230101_120000_backs.pdf`, will be produced. The back pages are mirrored
-horizontally so that fronts and backs line up when cutting. Print using the
-"flip on long edge" duplex option to ensure proper alignment.
+horizontally so that fronts and backs line up when cutting. Use the
+`horizontal-back-offset` setting to tweak their horizontal position if your
+printer is misaligned. Print using the "flip on long edge" duplex option to
+ensure proper alignment.
