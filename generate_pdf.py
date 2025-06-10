@@ -106,6 +106,8 @@ def _draw_single_page(canvas_obj, page, config, front):
     cell_width = config['card_width_pt']
     cell_height = config['card_height_pt']
 
+    oversize = config.get('back_oversize_pt', 0) if not front else 0
+
     extra_x = page_width - 2 * margin - cols * cell_width - (cols - 1) * gap
     extra_x = max(0, extra_x)
     right_margin = margin + extra_x
@@ -117,10 +119,9 @@ def _draw_single_page(canvas_obj, page, config, front):
             x = margin + col * (cell_width + gap)
         else:
             x = right_margin + (cols - 1 - col) * (cell_width + gap) + config.get('back_offset_pt', 0)
-            x -= config.get('back_oversize_pt', 0) / 2
+        x -= oversize / 2
         y = page_height - margin - cell_height - row * (cell_height + gap)
-        if not front:
-            y -= config.get('back_oversize_pt', 0) / 2
+        y -= oversize / 2
         img_path = card['front'] if front else card['back']
         img = Image.open(img_path)
         img_reader = ImageReader(img)
@@ -128,8 +129,8 @@ def _draw_single_page(canvas_obj, page, config, front):
             width = cell_width
             height = cell_height
         else:
-            width = cell_width + config.get('back_oversize_pt', 0)
-            height = cell_height + config.get('back_oversize_pt', 0)
+            width = cell_width + oversize
+            height = cell_height + oversize
         canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
 
 
