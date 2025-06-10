@@ -31,6 +31,7 @@ DEFAULT_BACK: resources/back.jpg   # default back image
 language-default: es     # preferred language for downloads
 pages-intercalation: true # interleave front and back pages in one PDF
 horizontal-back-offset: -2 # horizontal shift in mm for backs (negative = left)
+back-oversize: 0.2        # enlarge back images by this many mm in both width and height
 ```
 
 Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").

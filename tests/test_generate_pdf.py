@@ -148,6 +148,37 @@ def test_draw_pages_back_offset(monkeypatch, gp):
     assert [p[0] for p in positions] == [22, 12]
 
 
+def test_draw_pages_back_oversize(monkeypatch, gp):
+    sizes = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, img, x, y, width=None, height=None):
+            sizes.append((width, height))
+        def showPage(self):
+            pass
+        def save(self):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (34, 100),
+        'margin_pt': 5,
+        'gap_pt': 0,
+        'card_width_pt': 10,
+        'card_height_pt': 20,
+        'GRID': (1, 1),
+        'back_oversize_pt': 4,
+    }
+    pages = [[{'front': 'f1', 'back': 'b1'}]]
+
+    gp.draw_pages('dummy.pdf', pages, cfg, front=False)
+
+    assert sizes[0] == (14, 24)
+
+
 def test_draw_pages_intercalated_order(monkeypatch, gp):
     events = []
 

@@ -41,6 +41,7 @@ def load_config():
     cfg['card_height_pt'] = mm_to_pt(CARD_HEIGHT_MM)
     cfg.setdefault('pages-intercalation', True)
     cfg['back_offset_pt'] = mm_to_pt(cfg.get('horizontal-back-offset', -2))
+    cfg['back_oversize_pt'] = mm_to_pt(cfg.get('back-oversize', 0.2))
     return cfg
 
 
@@ -116,11 +117,20 @@ def _draw_single_page(canvas_obj, page, config, front):
             x = margin + col * (cell_width + gap)
         else:
             x = right_margin + (cols - 1 - col) * (cell_width + gap) + config.get('back_offset_pt', 0)
+            x -= config.get('back_oversize_pt', 0) / 2
         y = page_height - margin - cell_height - row * (cell_height + gap)
+        if not front:
+            y -= config.get('back_oversize_pt', 0) / 2
         img_path = card['front'] if front else card['back']
         img = Image.open(img_path)
         img_reader = ImageReader(img)
-        canvas_obj.drawImage(img_reader, x, y, width=cell_width, height=cell_height)
+        if front:
+            width = cell_width
+            height = cell_height
+        else:
+            width = cell_width + config.get('back_oversize_pt', 0)
+            height = cell_height + config.get('back_oversize_pt', 0)
+        canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
 
 
 def draw_pages(pdf_path, pages, config, front=True):

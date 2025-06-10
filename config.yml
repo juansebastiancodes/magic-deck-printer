@@ -6,3 +6,4 @@ DEFAULT_BACK: resources/back.jpg
 language-default: en
 pages-intercalation: true
 horizontal-back-offset: -2
+back-oversize: 0.2
