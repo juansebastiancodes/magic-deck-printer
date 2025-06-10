@@ -40,6 +40,7 @@ def load_config():
     cfg['card_width_pt'] = mm_to_pt(CARD_WIDTH_MM)
     cfg['card_height_pt'] = mm_to_pt(CARD_HEIGHT_MM)
     cfg.setdefault('pages-intercalation', True)
+    cfg['back_offset_pt'] = mm_to_pt(cfg.get('horizontal-back-offset', -2))
     return cfg
 
 
@@ -114,7 +115,7 @@ def _draw_single_page(canvas_obj, page, config, front):
         if front:
             x = margin + col * (cell_width + gap)
         else:
-            x = right_margin + (cols - 1 - col) * (cell_width + gap)
+            x = right_margin + (cols - 1 - col) * (cell_width + gap) + config.get('back_offset_pt', 0)
         y = page_height - margin - cell_height - row * (cell_height + gap)
         img_path = card['front'] if front else card['back']
         img = Image.open(img_path)
