@@ -27,20 +27,34 @@ def load_config():
 
 
 def parse_card_list(path=CARD_LIST_FILE):
+    """Parse a card list file.
+
+    Accepted formats:
+        ``1 Card Name``
+        ``1 Card Name (SET)``
+        ``1 Card Name (SET) 123``
+        ``1 Card Name (SET) ABC-123``
+    """
+
     cards = []
     if not os.path.exists(path):
         return cards
+
+    line_re = re.compile(r"^(\d+)\s+(.*?)(?:\s+\(([^)]+)\))?(?:\s+([^\s]+))?$")
+
     with open(path, 'r', encoding='utf-8') as f:
         for line in f:
             line = line.strip()
             if not line or line.startswith('#'):
                 continue
-            m = re.match(r'^(\d+)\s+(.+)$', line)
+            m = line_re.match(line)
             if not m:
                 continue
             qty = int(m.group(1))
-            name = m.group(2)
-            cards.append((qty, name))
+            name = m.group(2).strip()
+            set_code = m.group(3)
+            collector = m.group(4)
+            cards.append((qty, name, set_code, collector))
     return cards
 
 
@@ -60,16 +74,26 @@ def _append_lang(url: str, lang: str) -> str:
     return urlunparse(parsed._replace(query=new_query))
 
 
-def _fetch_single_card(qty, name, lang):
+def _fetch_single_card(qty, name, lang, set_code=None, collector=None):
     card_data = None
-    for language in (lang, 'en'):
-        r = requests.get(
-            'https://api.scryfall.com/cards/named',
-            params={'exact': name, 'lang': language},
-        )
+
+    if set_code and collector:
+        url = f"https://api.scryfall.com/cards/{set_code}/{collector}/{lang}"
+        r = requests.get(url)
         if r.status_code == 200:
             card_data = r.json()
-            break
+    else:
+        for language in (lang, 'en'):
+            params = {'exact': name, 'lang': language}
+            if set_code:
+                params['set'] = set_code
+            r = requests.get(
+                'https://api.scryfall.com/cards/named',
+                params=params,
+            )
+            if r.status_code == 200:
+                card_data = r.json()
+                break
     if not card_data:
         print(
             f"Advertencia: no se encontró la carta '{name}' en Scryfall. "
@@ -116,7 +140,10 @@ def fetch_images():
     cards = parse_card_list()
     os.makedirs(DECK_DIR, exist_ok=True)
     with ThreadPoolExecutor() as executor:
-        futures = [executor.submit(_fetch_single_card, qty, name, lang) for qty, name in cards]
+        futures = [
+            executor.submit(_fetch_single_card, qty, name, lang, set_code, collector)
+            for qty, name, set_code, collector in cards
+        ]
         for f in futures:
             f.result()
 
