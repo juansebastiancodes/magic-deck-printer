@@ -31,6 +31,7 @@ DEFAULT_BACK: resources/back.jpg   # default back image
 language-default: es     # preferred language for downloads
 pages-intercalation: true # interleave front and back pages in one PDF
 horizontal-back-offset: -2 # horizontal shift in mm for backs (negative = left)
+vertical-back-offset: 0  # vertical shift in mm for backs (positive = up)
 back-oversize: 0.2        # enlarge back images by this many mm in both width and height
 ```
 
@@ -71,5 +72,6 @@ back pages. Otherwise two files, `deck_20230101_120000_fronts.pdf` and
 `deck_20230101_120000_backs.pdf`, will be produced. The back pages are mirrored
 horizontally so that fronts and backs line up when cutting. Use the
 `horizontal-back-offset` setting to tweak their horizontal position if your
-printer is misaligned. Print using the "flip on long edge" duplex option to
+printer is misaligned. Likewise, adjust `vertical-back-offset` for vertical
+alignment issues. Print using the "flip on long edge" duplex option to
 ensure proper alignment.
