@@ -42,7 +42,7 @@ def parse_card_list(path=CARD_LIST_FILE):
         return cards
 
     line_re = re.compile(
-        r"^(\d+)\s+(.*?)(?:\s+\(([^)]+)\))?(?:\s+([^\s]+))?(?:\s+\*F\*)?$",
+        r"^(\d+)\s+(.*?)(?:\s+\(([^)]+)\)(?:\s+([^\s]+))?)?(?:\s+\*F\*)?$",
         re.IGNORECASE,
     )
 
