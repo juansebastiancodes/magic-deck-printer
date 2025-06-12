@@ -94,6 +94,18 @@ def test_parse_card_list_ignore_f_flag(fi, tmp_path):
     ]
 
 
+def test_parse_card_list_no_set(fi, tmp_path):
+    data = "1 Baleful Strix\n"
+    path = tmp_path / "cards.txt"
+    path.write_text(data)
+
+    cards = fi.parse_card_list(str(path))
+
+    assert cards == [
+        (1, 'Baleful Strix', None, None),
+    ]
+
+
 def test_fetch_single_card_with_set_and_collector(monkeypatch, fi, tmp_path):
     data = {
         'lang': 'en',
