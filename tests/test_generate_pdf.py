@@ -363,4 +363,43 @@ def test_page_rotation(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=True)
 
-    assert ('rotate', 45) in calls
+    assert ('rotate', -45.0) in calls
+
+
+def test_page_rotation_negative(monkeypatch, gp):
+    calls = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, *a, **k):
+            pass
+        def showPage(self):
+            pass
+        def saveState(self):
+            calls.append('saveState')
+        def translate(self, x, y):
+            calls.append(('translate', x, y))
+        def rotate(self, angle):
+            calls.append(('rotate', angle))
+        def restoreState(self):
+            calls.append('restoreState')
+        def save(self):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (10, 10),
+        'margin_pt': 0,
+        'gap_pt': 0,
+        'card_width_pt': 1,
+        'card_height_pt': 1,
+        'GRID': (1, 1),
+        'page_rotation_deg': -30,
+    }
+    pages = [[{'front': 'f1', 'back': 'b1'}]]
+
+    gp.draw_pages('dummy.pdf', pages, cfg, front=True)
+
+    assert ('rotate', 30.0) in calls
