@@ -26,6 +26,14 @@ def stub_dependencies(monkeypatch):
             pass
         def showPage(self):
             pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
         def save(self):
             pass
 
@@ -97,6 +105,14 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
             positions.append((x, y))
         def showPage(self):
             pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
         def save(self):
             pass
 
@@ -126,6 +142,14 @@ def test_draw_pages_back_offset(monkeypatch, gp):
         def drawImage(self, img, x, y, width=None, height=None):
             positions.append((x, y))
         def showPage(self):
+            pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
             pass
         def save(self):
             pass
@@ -158,6 +182,14 @@ def test_draw_pages_vertical_back_offset(monkeypatch, gp):
             positions.append((x, y))
         def showPage(self):
             pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
         def save(self):
             pass
 
@@ -188,6 +220,14 @@ def test_draw_pages_back_oversize(monkeypatch, gp):
         def drawImage(self, img, x, y, width=None, height=None):
             sizes.append((width, height))
         def showPage(self):
+            pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
             pass
         def save(self):
             pass
@@ -220,6 +260,14 @@ def test_draw_pages_front_no_oversize(monkeypatch, gp):
             sizes.append((width, height))
         def showPage(self):
             pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
         def save(self):
             pass
 
@@ -251,6 +299,14 @@ def test_draw_pages_intercalated_order(monkeypatch, gp):
             events.append(img)
         def showPage(self):
             events.append('page')
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
         def save(self):
             pass
 
@@ -269,3 +325,42 @@ def test_draw_pages_intercalated_order(monkeypatch, gp):
     gp.draw_pages_intercalated('dummy.pdf', pages, cfg)
 
     assert events == ['f1', 'page', 'b1', 'page']
+
+
+def test_page_rotation(monkeypatch, gp):
+    calls = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, *a, **k):
+            pass
+        def showPage(self):
+            pass
+        def saveState(self):
+            calls.append('saveState')
+        def translate(self, x, y):
+            calls.append(('translate', x, y))
+        def rotate(self, angle):
+            calls.append(('rotate', angle))
+        def restoreState(self):
+            calls.append('restoreState')
+        def save(self):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (10, 10),
+        'margin_pt': 0,
+        'gap_pt': 0,
+        'card_width_pt': 1,
+        'card_height_pt': 1,
+        'GRID': (1, 1),
+        'page_rotation_deg': 45,
+    }
+    pages = [[{'front': 'f1', 'back': 'b1'}]]
+
+    gp.draw_pages('dummy.pdf', pages, cfg, front=True)
+
+    assert ('rotate', 45) in calls
