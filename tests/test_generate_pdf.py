@@ -363,7 +363,7 @@ def test_page_rotation(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=True)
 
-    assert ('rotate', -45.0) in calls
+    assert ('rotate', 315.0) in calls
 
 
 def test_page_rotation_negative(monkeypatch, gp):
@@ -402,4 +402,4 @@ def test_page_rotation_negative(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=True)
 
-    assert ('rotate', 30.0) in calls
+    assert ('rotate', 390.0) in calls

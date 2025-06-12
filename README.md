@@ -33,7 +33,8 @@ pages-intercalation: true # interleave front and back pages in one PDF
 horizontal-back-offset: -2 # horizontal shift in mm for backs (negative = left)
 vertical-back-offset: 0  # vertical shift in mm for backs (positive = up)
 back-oversize: 0.2        # enlarge back images by this many mm in both width and height
-page-rotation-degrees: 0  # positive = clockwise, negative = counter-clockwise
+page-rotation-degrees: 0  # rotation applied as ``360 - value`` so the argument sent
+                           # to ReportLab is always positive
 ```
 
 Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").
