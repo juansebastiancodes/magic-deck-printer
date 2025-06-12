@@ -107,7 +107,7 @@ def _draw_single_page(canvas_obj, page, config, front):
     page_width, page_height = page_size
     cell_width = config['card_width_pt']
     cell_height = config['card_height_pt']
-    angle = float(config.get('page_rotation_deg', 0))
+    angle = float(config.get('page_rotation_deg', 0)) if not front else 0
 
     # ReportLab rotates counter-clockwise for positive values.  The
     # configuration may include negative numbers for clockwise rotation.
@@ -119,7 +119,8 @@ def _draw_single_page(canvas_obj, page, config, front):
 
     canvas_obj.saveState()
     canvas_obj.translate(page_width/2, page_height/2)
-    canvas_obj.rotate(angle)
+    if angle:
+        canvas_obj.rotate(angle)
     canvas_obj.translate(-page_width/2, -page_height/2)
 
     oversize = config.get('back_oversize_pt', 0) if not front else 0
