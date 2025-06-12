@@ -69,6 +69,16 @@ def download_image(url, dest):
         f.write(resp.content)
 
 
+INVALID_CHARS = r'[<>:"/\\|?*]'
+
+
+def sanitize_filename(name: str) -> str:
+    """Return *name* safe for filesystem storage."""
+    clean = re.sub(INVALID_CHARS, '', name)
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    return clean
+
+
 def _append_lang(url: str, lang: str) -> str:
     """Return URL with `lang` query parameter added if missing."""
     parsed = urlparse(url)
@@ -98,6 +108,18 @@ def _fetch_single_card(qty, name, lang, set_code=None, collector=None):
             if r.status_code == 200:
                 card_data = r.json()
                 break
+        if not card_data:
+            for language in (lang, 'en'):
+                params = {'fuzzy': name, 'lang': language}
+                if set_code:
+                    params['set'] = set_code
+                r = requests.get(
+                    'https://api.scryfall.com/cards/named',
+                    params=params,
+                )
+                if r.status_code == 200:
+                    card_data = r.json()
+                    break
     if not card_data:
         print(
             f"Advertencia: no se encontró la carta '{name}' en Scryfall. "
@@ -115,6 +137,7 @@ def _fetch_single_card(qty, name, lang, set_code=None, collector=None):
         img_url = card_data['image_uris'].get('png') or card_data['image_uris'].get('large')
         img_url = _append_lang(img_url, lang)
         card_name = card_data.get('printed_name') or card_data['name']
+        card_name = sanitize_filename(card_name)
         fname = f"{qty} {card_name}.png"
         path = os.path.join(DECK_DIR, fname)
         download_image(img_url, path)
@@ -125,6 +148,8 @@ def _fetch_single_card(qty, name, lang, set_code=None, collector=None):
             ident = f"{_next_pair_id():02d}"
             front_name = front.get('printed_name') or front['name']
             back_name = back.get('printed_name') or back['name']
+            front_name = sanitize_filename(front_name)
+            back_name = sanitize_filename(back_name)
             fpath = os.path.join(DECK_DIR, f"F{ident} {front_name}.png")
             bpath = os.path.join(DECK_DIR, f"B{ident} {back_name}.png")
             front_url = front['image_uris'].get('png') or front['image_uris'].get('large')

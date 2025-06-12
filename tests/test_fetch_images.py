@@ -127,3 +127,40 @@ def test_fetch_single_card_with_set_and_collector(monkeypatch, fi, tmp_path):
 
     assert called['url'].startswith('https://api.scryfall.com/cards/m20/123/en')
     assert called['params'] is None
+
+
+def test_sanitize_filename(fi):
+    assert fi.sanitize_filename('Summon: Ixion') == 'Summon Ixion'
+
+
+def test_fetch_single_card_fuzzy(monkeypatch, fi, tmp_path):
+    data = {
+        'lang': 'en',
+        'image_uris': {'png': 'http://img/image.png'},
+        'name': 'Ixion',
+    }
+
+    calls = []
+
+    def fake_get(url, params=None):
+        calls.append(params)
+        if params and 'exact' in params:
+            return types.SimpleNamespace(status_code=404)
+        return DummyResp(data)
+
+    downloaded = []
+
+    def fake_download(url, dest):
+        downloaded.append(dest)
+        path = tmp_path / dest
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('')
+
+    monkeypatch.setattr(fi.requests, 'get', fake_get)
+    monkeypatch.setattr(fi, 'download_image', fake_download)
+    monkeypatch.setattr(fi, 'DECK_DIR', str(tmp_path))
+
+    fi._fetch_single_card(1, 'Summon: Ixion', 'en')
+
+    assert any('fuzzy' in c for c in calls if c)
+    assert downloaded
