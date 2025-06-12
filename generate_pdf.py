@@ -43,6 +43,7 @@ def load_config():
     cfg['back_offset_pt'] = mm_to_pt(cfg.get('horizontal-back-offset', -2))
     cfg['vertical_back_offset_pt'] = mm_to_pt(cfg.get('vertical-back-offset', 0))
     cfg['back_oversize_pt'] = mm_to_pt(cfg.get('back-oversize', 0.2))
+    cfg['page_rotation_deg'] = cfg.get('page-rotation-degrees', 0)
     return cfg
 
 
@@ -106,6 +107,12 @@ def _draw_single_page(canvas_obj, page, config, front):
     page_width, page_height = page_size
     cell_width = config['card_width_pt']
     cell_height = config['card_height_pt']
+    angle = config.get('page_rotation_deg', 0)
+
+    canvas_obj.saveState()
+    canvas_obj.translate(page_width/2, page_height/2)
+    canvas_obj.rotate(angle)
+    canvas_obj.translate(-page_width/2, -page_height/2)
 
     oversize = config.get('back_oversize_pt', 0) if not front else 0
 
@@ -135,6 +142,8 @@ def _draw_single_page(canvas_obj, page, config, front):
             width = cell_width + oversize
             height = cell_height + oversize
         canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
+
+    canvas_obj.restoreState()
 
 
 def draw_pages(pdf_path, pages, config, front=True):
