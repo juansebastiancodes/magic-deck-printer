@@ -109,13 +109,16 @@ def _draw_single_page(canvas_obj, page, config, front):
     cell_height = config['card_height_pt']
     angle = float(config.get('page_rotation_deg', 0))
 
-    # ReportLab rotates counter-clockwise for positive angles. In the
-    # configuration we define positive values as clockwise to be more
-    # intuitive, so we invert the sign here.
+    # ReportLab rotates counter-clockwise for positive values. The project
+    # configuration defines positive numbers as clockwise, but we also want to
+    # avoid passing negative angles to ``rotate``. To keep the same visual
+    # result while ensuring the argument is always positive, we transform the
+    # value using ``360 - angle``.
+    angle = 360 - angle
 
     canvas_obj.saveState()
     canvas_obj.translate(page_width/2, page_height/2)
-    canvas_obj.rotate(-angle)
+    canvas_obj.rotate(angle)
     canvas_obj.translate(-page_width/2, -page_height/2)
 
     oversize = config.get('back_oversize_pt', 0) if not front else 0
