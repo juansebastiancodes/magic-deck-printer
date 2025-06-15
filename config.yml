@@ -9,3 +9,5 @@ horizontal-back-offset: -2
 vertical-back-offset: 0
 back-oversize: 0.2
 page-rotation-degrees: 0
+guided-lines: true
+cross-calibrator: false
