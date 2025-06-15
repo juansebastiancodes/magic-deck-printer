@@ -36,6 +36,18 @@ def stub_dependencies(monkeypatch):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     rl.pdfgen.canvas = types.SimpleNamespace(Canvas=DummyCanvas)
     rl.lib = types.ModuleType('lib')
@@ -115,6 +127,14 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -130,7 +150,7 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=False)
 
-    assert [p[0] for p in positions] == [19, 9]
+    assert [p[0] for p in positions] == [17, 7]
 
 
 def test_draw_pages_back_offset(monkeypatch, gp):
@@ -153,6 +173,14 @@ def test_draw_pages_back_offset(monkeypatch, gp):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -169,7 +197,7 @@ def test_draw_pages_back_offset(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=False)
 
-    assert [p[0] for p in positions] == [22, 12]
+    assert [p[0] for p in positions] == [20, 10]
 
 
 def test_draw_pages_vertical_back_offset(monkeypatch, gp):
@@ -192,6 +220,14 @@ def test_draw_pages_vertical_back_offset(monkeypatch, gp):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -208,7 +244,7 @@ def test_draw_pages_vertical_back_offset(monkeypatch, gp):
 
     gp.draw_pages('dummy.pdf', pages, cfg, front=False)
 
-    assert [p[1] for p in positions] == [79, 59]
+    assert [p[1] for p in positions] == [54, 34]
 
 
 def test_draw_pages_back_oversize(monkeypatch, gp):
@@ -230,6 +266,14 @@ def test_draw_pages_back_oversize(monkeypatch, gp):
         def restoreState(self):
             pass
         def save(self):
+            pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
             pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
@@ -270,6 +314,14 @@ def test_draw_pages_front_no_oversize(monkeypatch, gp):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -309,6 +361,14 @@ def test_draw_pages_intercalated_order(monkeypatch, gp):
             pass
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -346,6 +406,14 @@ def test_page_rotation(monkeypatch, gp):
         def restoreState(self):
             calls.append('restoreState')
         def save(self):
+            pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
             pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
@@ -386,6 +454,14 @@ def test_page_rotation_negative(monkeypatch, gp):
             calls.append('restoreState')
         def save(self):
             pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
 
@@ -424,6 +500,14 @@ def test_page_rotation_front_unchanged(monkeypatch, gp):
         def restoreState(self):
             calls.append('restoreState')
         def save(self):
+            pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
             pass
 
     monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)

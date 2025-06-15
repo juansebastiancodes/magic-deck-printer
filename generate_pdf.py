@@ -44,6 +44,8 @@ def load_config():
     cfg['vertical_back_offset_pt'] = mm_to_pt(cfg.get('vertical-back-offset', 0))
     cfg['back_oversize_pt'] = mm_to_pt(cfg.get('back-oversize', 0.2))
     cfg['page_rotation_deg'] = cfg.get('page-rotation-degrees', 0)
+    cfg.setdefault('guided-lines', True)
+    cfg.setdefault('cross-calibrator', False)
     return cfg
 
 
@@ -99,6 +101,60 @@ def compute_grid(config):
     return cols, rows
 
 
+def _draw_guides(canvas_obj, config, x_origin, y_top, cols, rows, front):
+    if not front or not config.get('guided-lines', True):
+        return
+
+    page_width, page_height = config['page_size']
+    cell_w = config['card_width_pt']
+    cell_h = config['card_height_pt']
+    gap = config['gap_pt']
+
+    canvas_obj.saveState()
+    canvas_obj.setStrokeGray(0.7)
+    canvas_obj.setLineWidth(0.25)
+
+    for c in range(cols):
+        left = x_origin + c * (cell_w + gap)
+        right = left + cell_w
+        canvas_obj.line(left, 0, left, page_height)
+        canvas_obj.line(right, 0, right, page_height)
+
+    for r in range(rows):
+        top = y_top - r * (cell_h + gap)
+        bottom = top - cell_h
+        canvas_obj.line(0, top, page_width, top)
+        canvas_obj.line(0, bottom, page_width, bottom)
+
+    canvas_obj.restoreState()
+
+
+def _draw_crosses(canvas_obj, config, front, x_offset=0, y_offset=0):
+    if not config.get('cross-calibrator') and not config.get('_force_cross', False):
+        return
+
+    page_width, page_height = config['page_size']
+    dist = mm_to_pt(4)
+    size = mm_to_pt(3)
+
+    centers = [
+        (dist + x_offset, page_height - dist + y_offset),
+        (page_width - dist + x_offset, page_height - dist + y_offset),
+        (dist + x_offset, dist + y_offset),
+        (page_width - dist + x_offset, dist + y_offset),
+    ]
+
+    canvas_obj.saveState()
+    canvas_obj.setStrokeColorRGB(0, 0, 0)
+    canvas_obj.setLineWidth(0.25)
+
+    for cx, cy in centers:
+        canvas_obj.line(cx - size / 2, cy, cx + size / 2, cy)
+        canvas_obj.line(cx, cy - size / 2, cx, cy + size / 2)
+
+    canvas_obj.restoreState()
+
+
 def _draw_single_page(canvas_obj, page, config, front):
     page_size = config['page_size']
     margin = config['margin_pt']
@@ -125,19 +181,25 @@ def _draw_single_page(canvas_obj, page, config, front):
 
     oversize = config.get('back_oversize_pt', 0) if not front else 0
 
-    extra_x = page_width - 2 * margin - cols * cell_width - (cols - 1) * gap
-    extra_x = max(0, extra_x)
-    right_margin = margin + extra_x
+    grid_w = cols * cell_width + (cols - 1) * gap
+    grid_h = rows * cell_height + (rows - 1) * gap
+
+    extra_x = max(0, page_width - 2 * margin - grid_w)
+    extra_y = max(0, page_height - 2 * margin - grid_h)
+
+    x_origin = margin + extra_x / 2
+    right_margin = x_origin
+    y_top = page_height - margin - extra_y / 2
 
     for idx, card in enumerate(page):
         col = idx % cols
         row = idx // cols
         if front:
-            x = margin + col * (cell_width + gap)
+            x = x_origin + col * (cell_width + gap)
         else:
             x = right_margin + (cols - 1 - col) * (cell_width + gap) + config.get('back_offset_pt', 0)
         x -= oversize / 2
-        y = page_height - margin - cell_height - row * (cell_height + gap)
+        y = y_top - cell_height - row * (cell_height + gap)
         if not front:
             y += config.get('vertical_back_offset_pt', 0)
         y -= oversize / 2
@@ -151,6 +213,11 @@ def _draw_single_page(canvas_obj, page, config, front):
             width = cell_width + oversize
             height = cell_height + oversize
         canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
+
+    _draw_guides(canvas_obj, config, x_origin, y_top, cols, rows, front)
+    x_off = config.get('back_offset_pt', 0) if not front else 0
+    y_off = config.get('vertical_back_offset_pt', 0) if not front else 0
+    _draw_crosses(canvas_obj, config, front, x_off, y_off)
 
     canvas_obj.restoreState()
 
