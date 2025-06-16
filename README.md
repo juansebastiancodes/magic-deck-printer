@@ -36,6 +36,8 @@ back-oversize: 0.2        # enlarge back images by this many mm in both width an
 page-rotation-degrees: 0  # rotation in degrees. Negative values are transformed
                            # using ``360 - value`` so the argument passed to
                            # ReportLab is always positive
+guided-lines: true        # draw thin grey cutting guides on fronts
+cross-calibrator: false   # draw small calibration crosses on every corner
 ```
 
 Cards are printed at the official size of 63.5mm × 88.9mm (2.5" × 3.5").
@@ -78,3 +80,9 @@ horizontally so that fronts and backs line up when cutting. Use the
 printer is misaligned. Likewise, adjust `vertical-back-offset` for vertical
 alignment issues. Print using the "flip on long edge" duplex option to
 ensure proper alignment.
+
+To generate a page containing only calibration crosses use:
+
+```bash
+python3 generate_calibration_page.py
+```
