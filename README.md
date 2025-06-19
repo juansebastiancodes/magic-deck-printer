@@ -28,6 +28,7 @@ DPI: 300                 # used for conversions
 MARGIN_MM: 5             # margin on all sides
 GAP_MM: 2                # space between cards
 DEFAULT_BACK: resources/back.jpg   # default back image
+blank-back: false       # when true, use a white back instead of DEFAULT_BACK
 language-default: es     # preferred language for downloads
 pages-intercalation: true # interleave front and back pages in one PDF
 horizontal-back-offset: -2 # horizontal shift in mm for backs (negative = left)
