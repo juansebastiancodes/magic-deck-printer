@@ -3,6 +3,7 @@ DPI: 300
 MARGIN_MM: 5
 GAP_MM: 1
 DEFAULT_BACK: resources/back.jpg
+blank-back: false
 language-default: en
 pages-intercalation: true
 horizontal-back-offset: -2
