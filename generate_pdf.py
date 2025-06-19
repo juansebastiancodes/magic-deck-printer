@@ -46,6 +46,7 @@ def load_config():
     cfg['page_rotation_deg'] = cfg.get('page-rotation-degrees', 0)
     cfg.setdefault('guided-lines', True)
     cfg.setdefault('cross-calibrator', False)
+    cfg.setdefault('blank-back', False)
     return cfg
 
 
@@ -75,7 +76,10 @@ def parse_deck(config):
         if e['fb'] == 'F' and e['id'] and e['id'] in backs:
             back = backs[e['id']]
         if not back:
-            back = config.get('DEFAULT_BACK')
+            if config.get('blank-back'):
+                back = None
+            else:
+                back = config.get('DEFAULT_BACK')
         for _ in range(e['qty']):
             cards.append({'front': e['path'], 'back': back})
     return cards
@@ -204,15 +208,23 @@ def _draw_single_page(canvas_obj, page, config, front):
             y += config.get('vertical_back_offset_pt', 0)
         y -= oversize / 2
         img_path = card['front'] if front else card['back']
-        img = Image.open(img_path)
-        img_reader = ImageReader(img)
-        if front:
-            width = cell_width
-            height = cell_height
+        if img_path:
+            img = Image.open(img_path)
+            img_reader = ImageReader(img)
+            if front:
+                width = cell_width
+                height = cell_height
+            else:
+                width = cell_width + oversize
+                height = cell_height + oversize
+            canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
         else:
-            width = cell_width + oversize
-            height = cell_height + oversize
-        canvas_obj.drawImage(img_reader, x, y, width=width, height=height)
+            width = cell_width if front else cell_width + oversize
+            height = cell_height if front else cell_height + oversize
+            canvas_obj.saveState()
+            canvas_obj.setFillColorRGB(1, 1, 1)
+            canvas_obj.rect(x, y, width, height, fill=1, stroke=0)
+            canvas_obj.restoreState()
 
     _draw_guides(canvas_obj, config, x_origin, y_top, cols, rows, front)
     x_off = config.get('back_offset_pt', 0) if not front else 0

@@ -42,7 +42,11 @@ def stub_dependencies(monkeypatch):
             pass
         def setStrokeColorRGB(self, *a, **k):
             pass
+        def setFillColorRGB(self, *a, **k):
+            pass
         def line(self, *a, **k):
+            pass
+        def rect(self, *a, **k):
             pass
         def line(self, *a, **k):
             pass
@@ -107,6 +111,20 @@ def test_parse_deck(monkeypatch, gp, tmp_path):
     assert all(c['back'] == str(default_back) for c in swamps)
 
 
+def test_parse_deck_blank_back(monkeypatch, gp, tmp_path):
+    deck = tmp_path / 'deck'
+    deck.mkdir()
+    (deck / '1 Plains.jpg').write_text('')
+
+    monkeypatch.setattr(gp, 'DECK_DIR', str(deck))
+
+    config = {'blank-back': True}
+    cards = gp.parse_deck(config)
+
+    assert len(cards) == 1
+    assert cards[0]['back'] is None
+
+
 def test_draw_pages_back_mirrored(monkeypatch, gp):
     positions = []
 
@@ -132,6 +150,8 @@ def test_draw_pages_back_mirrored(monkeypatch, gp):
         def setLineWidth(self, *a, **k):
             pass
         def setStrokeColorRGB(self, *a, **k):
+            pass
+        def setFillColorRGB(self, *a, **k):
             pass
         def line(self, *a, **k):
             pass
@@ -178,6 +198,8 @@ def test_draw_pages_back_offset(monkeypatch, gp):
         def setLineWidth(self, *a, **k):
             pass
         def setStrokeColorRGB(self, *a, **k):
+            pass
+        def setFillColorRGB(self, *a, **k):
             pass
         def line(self, *a, **k):
             pass
@@ -226,6 +248,8 @@ def test_draw_pages_vertical_back_offset(monkeypatch, gp):
             pass
         def setStrokeColorRGB(self, *a, **k):
             pass
+        def setFillColorRGB(self, *a, **k):
+            pass
         def line(self, *a, **k):
             pass
 
@@ -272,6 +296,8 @@ def test_draw_pages_back_oversize(monkeypatch, gp):
         def setLineWidth(self, *a, **k):
             pass
         def setStrokeColorRGB(self, *a, **k):
+            pass
+        def setFillColorRGB(self, *a, **k):
             pass
         def line(self, *a, **k):
             pass
@@ -320,6 +346,8 @@ def test_draw_pages_front_no_oversize(monkeypatch, gp):
             pass
         def setStrokeColorRGB(self, *a, **k):
             pass
+        def setFillColorRGB(self, *a, **k):
+            pass
         def line(self, *a, **k):
             pass
 
@@ -339,6 +367,57 @@ def test_draw_pages_front_no_oversize(monkeypatch, gp):
     gp.draw_pages('dummy.pdf', pages, cfg, front=True)
 
     assert sizes[0] == (10, 20)
+
+
+def test_draw_blank_back(monkeypatch, gp):
+    events = []
+
+    class RecCanvas:
+        def __init__(self, *a, **k):
+            pass
+        def drawImage(self, *a, **k):
+            events.append('image')
+        def rect(self, *a, **k):
+            events.append('rect')
+        def showPage(self):
+            pass
+        def saveState(self):
+            pass
+        def translate(self, *args, **kwargs):
+            pass
+        def rotate(self, *args, **kwargs):
+            pass
+        def restoreState(self):
+            pass
+        def save(self):
+            pass
+        def setStrokeGray(self, *a, **k):
+            pass
+        def setLineWidth(self, *a, **k):
+            pass
+        def setStrokeColorRGB(self, *a, **k):
+            pass
+        def setFillColorRGB(self, *a, **k):
+            pass
+        def line(self, *a, **k):
+            pass
+
+    monkeypatch.setattr(gp.canvas, 'Canvas', RecCanvas)
+
+    cfg = {
+        'page_size': (34, 100),
+        'margin_pt': 5,
+        'gap_pt': 0,
+        'card_width_pt': 10,
+        'card_height_pt': 20,
+        'GRID': (1, 1),
+    }
+    pages = [[{'front': 'f1', 'back': None}]]
+
+    gp.draw_pages('dummy.pdf', pages, cfg, front=False)
+
+    assert 'rect' in events
+    assert 'image' not in events
 
 
 def test_draw_pages_intercalated_order(monkeypatch, gp):
