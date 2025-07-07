@@ -53,7 +53,11 @@ Create a `card-list.txt` file listing the cards to download:
 ```
 2 Swamp
 3 Island
+1 Beast [tfdn]
 ```
+
+Use square brackets to specify the set code for tokens. This allows
+distinguishing tokens with the same name from different sets.
 
 Run the downloader to populate `resources/deck/` with the required images:
 
