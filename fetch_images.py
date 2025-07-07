@@ -42,7 +42,7 @@ def parse_card_list(path=CARD_LIST_FILE):
         return cards
 
     line_re = re.compile(
-        r"^(\d+)\s+(.*?)(?:\s+\(([^)]+)\)(?:\s+([^\s]+))?)?(?:\s+\*F\*)?$",
+        r"^(\d+)\s+(.*?)(?:\s+(?:\(([^)]+)\)|\[([^\]]+)\])(?:\s+([^\s]+))?)?(?:\s+\*F\*)?$",
         re.IGNORECASE,
     )
 
@@ -56,8 +56,8 @@ def parse_card_list(path=CARD_LIST_FILE):
                 continue
             qty = int(m.group(1))
             name = m.group(2).strip()
-            set_code = m.group(3)
-            collector = m.group(4)
+            set_code = m.group(3) or m.group(4)
+            collector = m.group(5)
             cards.append((qty, name, set_code, collector))
     return cards
 
